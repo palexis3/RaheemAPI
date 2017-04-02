@@ -7,6 +7,7 @@ import urllib
 import json
 import sys
 import codecs
+import traceback
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy import create_engine
@@ -16,7 +17,7 @@ from IncidentsModel import Base, Incident
 sys.stdout = codecs.getwriter('utf8')(sys.stdout)
 sys.stderr = codecs.getwriter('utf8')(sys.stdout)
 
-engine = create_engine('sqlite:///RaheemIncidents.db')
+engine = create_engine('sqlite:///RaheemAPI.db')
 
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
@@ -43,24 +44,26 @@ try:
         incident_type = incident.incident_type
         tags = incident.tags
         reactions = incident.reactions
+
+        # Currently 5 users in Admin page as of when this script was wrote
+        user_id = randint(1, 5)
         
         # Getting user
-        user_url = address + "/api/v1/users/4?write_key=%s" % WRITE_KEY
+        user_url = address + "/api/v1/users/%s?write_key=%s" % (user_id, WRITE_KEY)
         user_req = requests.get(user_url)
         if user_req.status_code != requests.codes.ok:
             raise Exception('Could not request this user because of the status code: %s' % user_req.status_code)                         
         user = user_req.json()
         user = jsonurl.query_string(user)
-        
-        # Currently 5 users in Admin page as of when this script was wrote
-        user_id = randint(1, 5)
-        
+
         # Setting Incidents as a dictionary
-        data = dict(user_id = user_id, latitude = latitude, longitude = longitude, description = description, rating = rating, incident_type = incident_type, start_time = start_time, user = user, tags_list = tags, reactions_list = reactions)
-                            
+        data = dict(user_id = user_id, latitude = latitude, longitude = longitude, description = description, rating = rating, incident_type_name = incident_type, start_time = start_time, user = user, tags_list = tags, reactions_list = reactions, write_key = WRITE_KEY)
+        
         # Encoding dictionary
         params = urllib.urlencode(data)
         headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+
+        print "Params: \n %s \n" % params
         
         req = requests.post(url, params=params, headers=headers)
         if req.status_code != requests.codes.ok:
@@ -69,6 +72,7 @@ try:
 except Exception as err:
     print "Could not post 'incident' data to 'staging.raheem.ai'"
     print err.args
+    traceback.print_exc()
     sys.exit()
     
 else:

@@ -7,13 +7,13 @@ from sqlalchemy import create_engine
 Base = declarative_base()
 
 class Incident(Base):
-    __tablename__ = 'incident'
+    __tablename__ = 'incident_model'
     id = Column(Integer, primary_key = True)
     latitude = Column(String)
     longitude = Column(String)
     description = Column(String)
     start_time = Column(String)
-    rating = Column(Integer)
+    rating = Column(String)
     incident_type = Column(String)
     tags = Column(String)
     reactions = Column(String)
@@ -33,6 +33,6 @@ class Incident(Base):
             'reactions': self.reactions
             }
 
-engine = create_engine('sqlite:///RaheemIncidents.db')
+engine = create_engine('sqlite:///RaheemAPI.db')
 Base.metadata.create_all(engine)
             

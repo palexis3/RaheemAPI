@@ -5,8 +5,9 @@ from IncidentsModel import Base, Incident
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy import create_engine
-import requests
+import requestsgit a
 from random import randint
+import traceback
 import sys
 import json
 import codecs
@@ -14,7 +15,7 @@ import codecs
 sys.stdout = codecs.getwriter('utf8')(sys.stdout)
 sys.stderr = codecs.getwriter('utf8')(sys.stdout)
 
-engine = create_engine('sqlite:///RaheemIncidents.db')
+engine = create_engine('sqlite:///RaheemAPI.db')
 
 Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
@@ -30,7 +31,6 @@ try:
     
     # Received all json data from SF Incidents Report
     json_data = req.json()
-    count = 0
     
     rating = [1,2,3,4,5]
     rating_size = len(rating)
@@ -43,32 +43,27 @@ try:
     
     incident_types = {1: "got pulled over", 2: "called the police", 3: "got stopped on foot", 4: "witnessed police", 5: "other"}
     incident_types_size = len(incident_types)
-    
+
     for count in xrange(1000):
         data = json_data[count]
-        
+    
         latitude = data['y']
         longitude = data['x']
         description = data['descript']
         start_time = data['date']
         
-        rating = rating[randint(0, rating_size - 1)]
+        rate = rating[randint(0, rating_size - 1)]
         incident_type = incident_types[randint(1, incident_types_size)]
-        tags = tags[randint(1, tags_size)]
-        
+        tag = tags[randint(1, tags_size)]
+    
         # Checks the range of rating to assign a plausible reactions value
         if 3 <= rating <= 5:
-            reactions = reactions[randint(1, 7)]
+            reaction = reactions[randint(1, 7)]
         else:
-            reactions = reactions[randint(8, reactions_size)]
-
-        print "Rating: %s" % rating
-        print "Incident Type: %s" % incident_type
-        print "Tags: %s" % tags
-        print "Reactions : %s" % reactions
-        sys.exit()
-
-        incident = Incident(latitude = latitude, longitude = longitude, description = description, rating = rating, incident_type = incident_type, start_time = start_time, tags = tags, reactions = reactions)
+            reaction = reactions[randint(8, reactions_size)]
+            
+        rate = str(rate)
+        incident = Incident(latitude = latitude, longitude = longitude, description = description, rating = rate, incident_type = incident_type, start_time = start_time, tags = tag, reactions = reaction)
         session.add(incident)
         session.commit()
 
@@ -79,6 +74,7 @@ except Exception as err:
     
 else:
     print "Successully populated 'RaheemIncidents' db with 1000 incident models"
+
     
     
 
