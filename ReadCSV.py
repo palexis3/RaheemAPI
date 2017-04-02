@@ -1,5 +1,4 @@
 # Script reads a CSV file and creates Raheem API Data to post to Raheem API
-
 import requests
 import sys
 import codecs
@@ -44,9 +43,12 @@ try:
 
     incident_types = {1: "got pulled over", 2: "called the police", 3: "got stopped on foot", 4: "witnessed police", 5: "other"}
     incident_types_size = len(incident_types)
+    count = 0
 
-    for lat, long in izip(latitude, longitude):
-        
+    for lat, longi in izip(latitude, longitude):
+        if count == 1:
+            sys.exit()
+            
         rate = randint(1,5)
         incident_type = incident_types[randint(1, incident_types_size)]
         tag = tags[randint(1, tags_size)]
@@ -72,7 +74,7 @@ try:
         user = jsonurl.query_string(user)
 
         # Constructing an Incident as a dictionary
-        data = dict(user_id = user_id, user = user, latitude = lat, longitude = long, rating = rate, incident_type_name = incident_type, tags_list = tags, reactions_list = reaction, write_key = WRITE_KEY)
+        data = dict(user_id = user_id, user = user, latitude = lat, longitude = longi, rating = rate, incident_type_name = incident_type, tags_list = tag, reactions_list = reaction)
 
         # Encoding dictionary
         params = urllib.urlencode(data)
@@ -83,6 +85,7 @@ try:
         req = requests.post(url, params=params, headers=headers)
         if req.status_code != requests.codes.ok:
             raise Exception('Could not POST to Raheem because of status code: %s' % req.status_code)
+        count = count + 1
 
 except Exception as err:
     print "Failed to generate Raheem API data from CSV"
