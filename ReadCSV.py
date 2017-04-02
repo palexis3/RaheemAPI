@@ -1,5 +1,6 @@
 # Script reads a CSV file and creates Raheem API Data to post to Raheem API
 import requests
+import datetime
 import sys
 import codecs
 import pandas
@@ -46,7 +47,7 @@ try:
     count = 0
 
     for lat, longi in izip(latitude, longitude):
-        if count == 1:
+        if count == 2:
             sys.exit()
             
         rate = randint(1,5)
@@ -73,8 +74,11 @@ try:
         user_id = user['id']
         user = jsonurl.query_string(user)
 
+        # Getting current date
+        date = datetime.datetime.now().strftime('%s')
+
         # Constructing an Incident as a dictionary
-        data = dict(user_id = user_id, user = user, latitude = lat, longitude = longi, rating = rate, incident_type_name = incident_type, tags_list = tag, reactions_list = reaction)
+        data = dict(user_id = user_id, user = user, latitude = lat, longitude = longi, rating = rate, incident_type_name = incident_type, tags_list = tag, reactions_list = reaction, start_time = date)
 
         # Encoding dictionary
         params = urllib.urlencode(data)
