@@ -80,6 +80,9 @@ try:
 
         print "Params: \n %s \n" % params
 
+        req = requests.post(url, params=params, headers=headers)
+        if req.status_code != requests.codes.ok:
+            raise Exception('Could not POST to Raheem because of status code: %s' % req.status_code)
 
 except Exception as err:
     print "Failed to generate Raheem API data from CSV"
