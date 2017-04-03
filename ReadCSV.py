@@ -1,4 +1,5 @@
 # Script reads a CSV file and creates Raheem API Data to post to Raheem API
+
 import requests
 import datetime
 import sys
@@ -11,24 +12,52 @@ import jsonurl
 from itertools import izip
 from random import randint
 
-
-#Sacramentorealestatetransactions.csv
 address = "http://staging.raheem.ai/"
 READ_KEY = "0f40f161fbc3221225dbe7c4296afd53"
 WRITE_KEY = "87efbee4277a4cb7fd747b8ebf6729ff"
+MAX_RECORDS = 1000
 
 try:
     # Argument parser takes filename, which must be a CSV
     parser = argparse.ArgumentParser(description="Reads a CSV file")
     parser.add_argument("-i", dest="filename", required=True, help="Input file must be a CSV file", metavar="FILE")
+    parser.add_argument("-count", "--num")
     args = parser.parse_args()
 
     # Reading CSV File
     data = pandas.read_csv(args.filename)
+    num = int(args.num)
 
+    if num > MAX_RECORDS:
+        print "Number of incidents requested exceeded the max of %s" % MAX_RECORDS
+        sys.exit()
+    
     # Parsing latitude and longitude
-    latitude = data['latitude']
-    longitude = data['longitude']
+    latitude_variations = ['latitude', 'lat', 'Latitude', 'LATITUDE']
+    longitude_variations = ['longitude', 'long', 'Longitude', 'LONGITUDE']
+
+    latitude = None
+    longitude = None
+
+    # Loop thorough latitude and longitude arrays to see if their variations exist in the current CSV file
+    for lat in latitude_variations:
+        if lat in data.columns:
+            latitude = data[lat]
+            break
+
+    if latitude is None:
+        print "THERE IS NO LATITUDE COLUMN IN THIS CSV!"
+        sys.exit()
+
+    for longi in longitude_variations:
+        if longi in data.columns:
+            longitude = data[longi]
+            break
+
+    if longitude is None:
+        print "THERE IS NO LONGITUDE COLUMN IN THIS CSV!"
+        sys.exit()
+        
 
     if len(longitude) != len(latitude):
         print "Longitude and Latitude datasets don't have the same length"
@@ -36,7 +65,7 @@ try:
 
     url = address + "api/v1/incidents?write_key=%s" % WRITE_KEY
     
-    reactions = {1: "Protected", 2: "Relieved", 3: "Safe", 4: "Comforted", 5: "Taken care of", 6: "Heard", 7: "Other Positive", 8: "Threatened", 9: "Disrespected", 10: "Scared", 11: "Intimated", 12: "Embarrassed", 13: "Angry", 14: "Ignored", 15: "Other Negative"}
+    reactions = {1: "Protected", 2: "Relieved", 3: "Safe", 4: "Comforted", 5: "Taken care of", 6: "Heard", 7: "Other Positive", 8: "Threatened", 9: "Disrespected", 10: "Scared", 11: "Intimidated", 12: "Embarrassed", 13: "Angry", 14: "Ignored", 15: "Other Negative"}
     reactions_size = len(reactions)
 
     tags = {1: "Citation", 2: "Arrest", 3: "Police Shooting", 4: "Conversation", 5: "Crime", 6: "Other"}
@@ -47,9 +76,11 @@ try:
     count = 0
 
     for lat, longi in izip(latitude, longitude):
-        if count == 2:
-            sys.exit()
-            
+
+        # Condition checks the num of records to get
+        if count == num:
+            break
+        
         rate = randint(1,5)
         incident_type = incident_types[randint(1, incident_types_size)]
         tag = tags[randint(1, tags_size)]
@@ -86,6 +117,9 @@ try:
 
         print "Params: \n %s \n" % params
 
+        continue
+
+        # Sending a POST Request to Raheem
         req = requests.post(url, params=params, headers=headers)
         if req.status_code != requests.codes.ok:
             raise Exception('Could not POST to Raheem because of status code: %s' % req.status_code)
