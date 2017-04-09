@@ -13,8 +13,7 @@ from itertools import izip
 from random import randint
 
 address = "http://staging.raheem.ai/"
-READ_KEY = "0f40f161fbc3221225dbe7c4296afd53"
-WRITE_KEY = "87efbee4277a4cb7fd747b8ebf6729ff"
+WRITE_KEY = "Enter your WRITE KEY"
 MAX_RECORDS = 1000
 
 try:
@@ -77,7 +76,7 @@ try:
 
     for lat, longi in izip(latitude, longitude):
 
-        # Condition checks the num of records to get
+        # Condition checks the number of records to get
         if count == num:
             break
         
@@ -116,8 +115,6 @@ try:
         headers = {'Content-Type': 'application/x-www-form-urlencoded'}
 
         print "Params: \n %s \n" % params
-
-        continue
 
         # Sending a POST Request to Raheem
         req = requests.post(url, params=params, headers=headers)
