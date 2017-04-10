@@ -19,6 +19,8 @@ Install the following third-party libraries :
 ## Requirements
 
 The CSV file to be parsed must be within the same directory as the ReadCSV.py script. 
+
+
 The script will not post to the Raheem API without internet connection.
 
 ## Run
@@ -27,6 +29,8 @@ To run the ReadCSV script, simply make sure you're in the same directory of the 
 python ReadCSV.py -i `YOUR CSV FILE.csv` -count `NUM`
 
 where `YOUR CSV FILE.csv` is the name of the CSV file to be processed and `NUM` is the amount of objects to be produced.
+
+
 Note: `NUM` can be at maximum 1000.
 
 
