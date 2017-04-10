@@ -28,7 +28,7 @@ To run the ReadCSV script, simply make sure you're in the same directory of the 
 
 `$ python ReadCSV.py -i 'YOUR-CSV-FILE.csv' -count 'NUM'`
 
-where `YOUR-CSV-FILE.csv` is the name of the CSV file to be processed and `NUM` is the number of objects you want to script to generate.
+where `YOUR-CSV-FILE.csv` is the name of the CSV file to be processed and `NUM` is the number of objects you want the script to generate.
 
 
 Note: `NUM` can be at maximum 1000.
