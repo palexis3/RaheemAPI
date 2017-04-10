@@ -1,4 +1,4 @@
-# ${1:RaheemAPI ReadCSV}
+# RaheemAPI ReadCSV
 
 The ReadCSV python script reads a CSV file within the same directory path and gathers the longitude and
 latitude from the CSV to generate "good" dummy data up to max 1000 objects to, thereafter post to the staging Raheem API.
@@ -12,7 +12,7 @@ After installing Python 2.7, you can install the libraries posted below using :
 Install the following third-party libraries :
 `requests`
 `pandas`
-'jsonurl`
+`jsonurl`
 'itertools`
 `urllib`
 
