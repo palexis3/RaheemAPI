@@ -13,7 +13,7 @@ Install the following third-party libraries :
 `requests`
 `pandas`
 `jsonurl`
-'itertools`
+`itertools`
 `urllib`
 
 ## Requirements
