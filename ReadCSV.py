@@ -38,7 +38,7 @@ try:
     latitude = None
     longitude = None
 
-    # Loop thorough latitude and longitude arrays to see if their variations exist in the current CSV file
+    # Loop through latitude and longitude arrays to see if their variations exist in the current CSV file
     for lat in latitude_variations:
         if lat in data.columns:
             latitude = data[lat]
